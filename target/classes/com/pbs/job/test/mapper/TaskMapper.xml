@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pbs.job.test.mapper.TaskMapper">
+
+    <select id="selectUser" parameterType="Map" resultType="Map">
+        select * from pbs_org_user where ID=#{ID}
+    </select>
+    <insert id="insertRole" parameterType="Map">
+        INSERT INTO `pbs_qrtz_role`(`ID`, `ROLE_GROUP`, `ROLE_NAME`, `ORDER_INDEX`, `ORG_ID`)
+        VALUES (#{ID}, #{ROLE_GROUP}, #{ROLE_NAME}, #{ORDER_INDEX}, #{ORG_ID})
+    </insert>
+    <delete id="deleteRole" parameterType="Map">
+        delete from pbs_qrtz_role
+        <where>
+            <if test="ID !=null and ID!=''">
+                ID=#{ID}
+            </if>
+            <if test="ROLE_GROUP !=null and ROLE_GROUP!=''">
+               and ROLE_GROUP like concat('%',#{ROLE_GROUP},'%')
+            </if>
+        </where>
+    </delete>
+</mapper>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pbs.job.web.mapper.JobMapper">
+    <!--查询列表-->
+    <select id="selectJobList" parameterType="Map" resultType="Map">
+        select * from pbs_qrtz_job
+        <where>
+            IS_DEL=0
+            <if test="jobName !=null and jobName !=''">
+               and JOB_NAME like concat('%',#{jobName},'%')
+            </if>
+        </where>
+        order by CREATE_DATE
+    </select>
+    <!--查询单个数据-->
+    <select id="getData" parameterType="Map" resultType="Map">
+        select * from pbs_qrtz_job
+        <where>
+            <if test="isDel !=null">
+                IS_DEL=#{isDel}
+            </if>
+            <if test="id !=null and id !=''">
+               and ID=#{id}
+            </if>
+            <if test="jobName !=null and jobName !=''">
+               and JOB_NAME =#{jobName}
+            </if>
+        </where>
+    </select>
+    <!--insert-->
+    <insert id="insertData" parameterType="Map">
+        INSERT INTO pbs_qrtz_job(ID, CREATE_DATE, CREATE_USER, UPDATE_DATE,
+        JOB_NAME, IS_RUN,IS_DEL, JOB_TYPE, JOB_IMP, NIAN, XINGQI, YUE, RI, SHI, FEN, MIAO)
+        VALUES (
+            #{ID},#{CREATE_DATE},#{CREATE_USER},#{UPDATE_DATE},#{JOB_NAME},#{IS_RUN},0,
+            #{JOB_TYPE},#{JOB_IMP},#{NIAN},#{XINGQI},#{YUE},#{RI},#{SHI},#{FEN},#{MIAO}
+        )
+    </insert>
+    <update id="updateData" parameterType="Map">
+        UPDATE pbs_qrtz_job
+        SET
+        <if test="UPDATE_DATE !=null">
+            UPDATE_DATE = #{UPDATE_DATE},
+        </if><if test="UPDATE_USER !=null and UPDATE_USER !=''">
+            UPDATE_USER =#{UPDATE_USER},
+        </if><if test="JOB_NAME !=null and JOB_NAME !=''">
+            JOB_NAME = #{JOB_NAME},
+        </if><if test="IS_RUN !=null and IS_RUN !=''">
+            IS_RUN = #{IS_RUN},
+        </if><if test="JOB_TYPE !=null and JOB_TYPE !=''">
+            JOB_TYPE = #{JOB_TYPE},
+        </if><if test="JOB_IMP !=null and JOB_IMP !=''">
+            JOB_IMP = #{JOB_IMP},
+        </if><if test="NIAN !=null and NIAN !=''">
+            NIAN = #{NIAN},
+        </if><if test="XINGQI !=null and XINGQI !=''">
+            XINGQI = #{XINGQI},
+        </if><if test="YUE !=null and YUE !=''">
+            YUE = #{YUE},
+        </if><if test="RI !=null and RI !=''">
+            RI = #{RI},
+        </if><if test="SHI !=null and SHI !=''">
+            SHI = #{SHI},
+        </if><if test="FEN !=null and FEN !=''">
+            FEN = #{FEN},
+        </if><if test="MIAO !=null and MIAO !=''">
+            MIAO = #{MIAO}
+        </if>
+         WHERE ID = #{ID};
+    </update>
+    <update id="delDate" parameterType="Map">
+        UPDATE pbs_qrtz_job set  IS_DEL=1 ,IS_RUN=0
+        where ID IN
+        <foreach collection="idlist" open="(" separator="," close=")" item="id">
+            #{id}
+        </foreach>
+    </update>
+</mapper>

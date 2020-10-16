@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pbs.job.log.mapper.JobLogMapper">
+    <!--查询列表-->
+    <select id="selectJobLogList" parameterType="Map" resultType="Map">
+        select * from pbs_qrtz_job_log order by CREATE_DATE
+    </select>
+    <!--查询单个数据-->
+    <select id="getData" parameterType="Map" resultType="Map">
+        select * from pbs_qrtz_job_log
+        <where>
+            <if test="id !=null and id !=''">
+                and ID=#{id}
+            </if>
+            <if test="jobId !=null and jobId !=''">
+                and JOB_ID =#{jobId}
+            </if>
+        </where>
+    </select>
+    <!--insert-->
+    <insert id="insertData" parameterType="com.pbs.job.log.model.QuartzLog" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO pbs_qrtz_job_log( CREATE_DATE,JOB_ID,JOB_NAME,JOB_GROUP,METHOD_NAME,METHOD_PARAMS,
+        EXCUTE_TIME,JOB_MSG,JOB_STATUS,EXCEP_MSG)
+         VALUES (#{createDate},#{jobId},#{jobName},#{jobGroup},#{methodName},#{methodParams},
+         #{excuteTime},#{jobMsg},#{jobStatus},#{excepMsg})
+    </insert>
+    <!--update update pbs_qrtz_job_log set EXCUTE_TIME=#{excuteTime} where id=#{id}-->
+    <update id="updateDate" parameterType="com.pbs.job.log.model.QuartzLog">
+        update pbs_qrtz_job_log a,(SELECT COUNT(*) exct_time from pbs_qrtz_job_log WHERE JOB_ID=#{jobId}) b
+        set a.EXCUTE_TIME=b.exct_time where a.id=#{id}
+    </update>
+</mapper>

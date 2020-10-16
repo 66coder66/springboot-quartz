@@ -1,0 +1,118 @@
+<configuration debug="false">
+	<!--定义日志文件的存储地址 勿在 LogBack 的配置中使用相对路径-->
+	<property name="LOG_HOME" value="${user.dir}" />
+	<!-- 控制台输出 -->
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<!-- 输出INFO级别以上的日志，如果想要在控制台输出DEBUG级别日志则取消filter -->
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+		<param name="Encoding" value="UTF-8" /> 
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+			<!-- <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern> -->
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger{100} - %msg%n</pattern>
+		</encoder>
+	</appender>
+	
+	<!-- 按照每天生成日志文件 -->
+	<appender name="FILE_INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		 <!--只输出INFO-->
+         <filter class="ch.qos.logback.classic.filter.LevelFilter">
+             <!--过滤 INFO-->
+             <level>INFO</level>
+             <!--匹配到就允许-->
+             <onMatch>ACCEPT</onMatch>
+             <!--没有匹配到就禁止-->
+             <onMismatch>DENY</onMismatch>
+         </filter>
+		<param name="Encoding" value="UTF-8" />
+		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<!--日志文件输出的文件名-->
+			<FileNamePattern>${LOG_HOME}/logs/pbs-quartz-info-%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+			<maxFileSize>50MB</maxFileSize>
+			<!--日志文件保留天数-->
+			<MaxHistory>60</MaxHistory>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger - %msg%n</pattern>
+		</encoder>
+	</appender>
+	
+	<!-- ERROR及以上级别的日志文件 -->
+	<appender name="FILE_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+		<param name="Encoding" value="UTF-8" />
+		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<!--日志文件输出的文件名-->
+			<FileNamePattern>${LOG_HOME}/logs/pbs-quartz-error-%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+			<maxFileSize>50MB</maxFileSize>
+			<!--日志文件保留天数-->
+			<MaxHistory>60</MaxHistory>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger - %msg%n</pattern>
+		</encoder>
+	</appender>
+	
+	<!-- DEBUG日志文件 -->
+	<appender name="FILE_DEBUG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<!--只输出DEBUG-->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+             <!--过滤 DEBUG-->
+             <level>DEBUG</level>
+             <!--匹配到就允许-->
+             <onMatch>ACCEPT</onMatch>
+             <!--没有匹配到就禁止-->
+             <onMismatch>DENY</onMismatch>
+        </filter>
+		<param name="Encoding" value="UTF-8" />
+		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<!--日志文件输出的文件名-->
+			<FileNamePattern>${LOG_HOME}/logs/pbs-quartz-debug-%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+			<maxFileSize>50MB</maxFileSize>
+			<!--日志文件保留天数-->
+			<MaxHistory>60</MaxHistory>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger - %msg%n</pattern>
+		</encoder>
+	</appender>
+	
+	<!-- 日志输出级别 -->
+	<root level="INFO">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="FILE_INFO" />
+		<appender-ref ref="FILE_ERROR" />
+	</root>
+	
+	<!-- 设置 activemq的日志输出-->
+	<logger name="org.apache.activemq" additivity="false">
+        <level value="INFO" />
+    </logger>
+	
+	<!-- 设置 sql的日志输出-->
+	<!-- <logger name="java.sql" additivity="false">
+        <level value="INFO" />
+    </logger> -->
+    
+    <logger name="freemarker.cache" level="ERROR" />
+    
+    <!-- 需要输出DEBUG级别的包单独配置 -->
+	<logger name="com.pbs" additivity="true">
+        <level value="DEBUG" />
+        <appender-ref ref="FILE_DEBUG" />
+    </logger>
+    
+    <logger name="org.apache.ibatis" additivity="true">
+        <level value="DEBUG" />
+        <appender-ref ref="FILE_DEBUG" />
+    </logger>
+    
+</configuration>
+
